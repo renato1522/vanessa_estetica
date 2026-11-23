@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Agendamento Vanessa
 
-## Getting Started
+Aplicação de agendamentos para Vanessa Carla Estética, construída com Next.js, Prisma e SQLite.
 
-First, run the development server:
+## Preparar ambiente
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Instale o Node.js 20.9 ou superior.
+2. Copie `.env.example` para `.env` e defina `ADMIN_PASSWORD` e `AUTH_SECRET`. Use uma senha forte e uma chave aleatória com pelo menos 32 caracteres. O administrador criado pelo seed é `admin@vanessa.com`.
+   Opcionalmente, defina `NEXT_PUBLIC_WHATSAPP_NUMBER` com o número completo incluindo código do país e DDD, somente dígitos, para que os atalhos abram diretamente a conversa. Sem essa configuração, o WhatsApp abre com a mensagem pronta para escolher um contato.
+3. Instale as dependências e crie o banco com os dados iniciais:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```bash
+   npm install
+   npm run db:setup
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. Inicie o servidor local:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   npm run dev
+   ```
 
-## Learn More
+A página dos clientes fica em `http://localhost:3000`; o acesso administrativo fica em `http://localhost:3000/admin/login`.
 
-To learn more about Next.js, take a look at the following resources:
+O seed cria o administrador, os quatro serviços de estética e o expediente padrão (segunda a sábado). Para atualizar a senha, altere `ADMIN_PASSWORD` e execute `npm run db:seed`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Funcionalidades
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Página pública com apresentação e serviços.
+- Reserva em etapas, com cálculo de disponibilidade, duração do serviço, bloqueios e conflitos de horário verificados novamente dentro de transação.
+- Pedidos de agendamento ficam pendentes até a confirmação da Vanessa.
+- Painel administrativo com confirmação/recusa, cadastro de serviços, expediente e bloqueio de datas.
+- Sessão administrativa em cookie HTTP-only, assinatura `AUTH_SECRET` e senha armazenada com hash bcrypt.
+- APIs públicas e administrativas documentadas pelo próprio contrato REST (`/api/services`, `/api/availability`, `/api/appointments` e `/api/admin/*`).
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+SQLite é indicado para desenvolvimento e instalações simples em um único servidor. Para publicar em ambiente com múltiplas instâncias, configure um banco de dados compartilhado e uma estratégia de deploy/migrações adequada.
